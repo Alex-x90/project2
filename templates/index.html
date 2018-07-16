@@ -6,8 +6,21 @@
         <title>ChatterBot</title>
     </head>
     <body>
+        {% for channel in channels %}
+            <a href="{{ url_for('channel',channel=channel) }}">{{ channel }}</a>
+        {% endfor %}
 
 
+        <p class="channel">Create a new channel</p>
+        <form class="channel">
+            <input id="channelName" autocomplete="off" autofocus placeholder="Channel" type="text">
+            <input type="Create channel">
+        </form>
+
+        <form class="message">
+            <input id="messageSent" autocomplete="off" autofocus placeholder="message {{ channel }}" type="text">
+            <input type="Create channel">
+        </form>
 
     </body>
 </html>
