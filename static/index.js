@@ -33,9 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const option = document.createElement('option');
             option.innerHTML = key[i];
             option.value = key[i];
+            option.id = key[i];
             document.querySelector('#channel-change').append(option);
         }
         channel = localStorage.getItem('channel');
+        document.getElementById(channel).selected = true;
         socket.emit('channel change');
     });
 
@@ -45,7 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
         channels = JSON.parse(channel);
         currentChannel = localStorage.getItem('channel');
         var data = channels[currentChannel];
+        console.log(channels)
         document.querySelector('#messages').innerHTML = '';
+        console.log("hi")
         for (var i =0;i < data.length ;i++)
         {
             const li = document.createElement('li');
