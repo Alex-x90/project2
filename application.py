@@ -23,9 +23,10 @@ def message(channel,message):
     channel_list[f"{channel['channel']}"].append(message['message'])
     if len(channel_list[f"{channel['channel']}"]) > 100:
         del channel_list[f"{channel['channel']}"][0]
-        emit("new message", channel_list[f"{channel['channel']}"][100], broadcast=True)
-    value = len(channel_list[f"{channel['channel']}"])
-    emit("new message", channel_list[f"{channel['channel']}"][value-1], broadcast=True)
+        emit("new message", channel_list[f"{channel['channel']}"][99], broadcast=True)
+    else:
+        value = len(channel_list[f"{channel['channel']}"])
+        emit("new message", channel_list[f"{channel['channel']}"][value-1], broadcast=True)
 
 @socketio.on("connecting")
 def connect():
