@@ -10,7 +10,5 @@
 }
 
 .col-3{
-    position:sticky;
-    top:0;
-
+    padding-left:0px;
 }

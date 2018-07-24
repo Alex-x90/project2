@@ -23,7 +23,9 @@
                     </form>
 
                     <br>
-                    Channel<br>
+                    Channel
+                    <br>
+
                     <select id="channel-change">
                         <!-- <option value="channel.name">channel.name</option> -->
                     </select>
@@ -37,13 +39,14 @@
                     </form>
                 </div>
                 <div class="col-9">
+                    <button class="irellevent" onclick="clearMessages();">Clear messages</button>
                     <ul id="messages">
 
                     </ul>
-                <form class="message">
-                    <input id="messageSent" autocomplete="off" autofocus placeholder="message {{ channel }}" type="text">
-                    <input type="Submit">
-                </form>
+                    <form class="message">
+                        <input id="messageSent" autocomplete="off" autofocus placeholder="message {{ channel }}" type="text">
+                        <input type="Submit">
+                    </form>
 
                 </div>
             </div>

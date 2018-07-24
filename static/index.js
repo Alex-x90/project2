@@ -1,3 +1,15 @@
+function urlify(text) {
+    var urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, function(url) {
+        return '<a href="' + url + '">' + url + '</a>';
+    });
+}
+
+function clearMessages(){
+    console.log("hi")
+    document.querySelector('#messages').innerHTML = '';
+};
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // Connect to websocket
@@ -11,10 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         currentChannel = localStorage.getItem('channel');
         if (currentChannel == 'null')
-        {
-            localStorage.setItem('channel','general');
-        }
-        if (currentChannel == '[object Object]')
         {
             localStorage.setItem('channel','general');
         }
@@ -47,13 +55,11 @@ document.addEventListener('DOMContentLoaded', () => {
         channels = JSON.parse(channel);
         currentChannel = localStorage.getItem('channel');
         var data = channels[currentChannel];
-        console.log(channels)
         document.querySelector('#messages').innerHTML = '';
-        console.log("hi")
         for (var i =0;i < data.length ;i++)
         {
             const li = document.createElement('li');
-            li.innerHTML = data[i];
+            li.innerHTML = urlify(data[i]);
             document.querySelector('#messages').append(li);
         }
     });
@@ -82,16 +88,18 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     document.querySelector('.message').onsubmit = function() {
-            var date = new Date();
-            var name = localStorage.getItem('name');
-            var message = document.querySelector('#messageSent').value;
-            const channel = localStorage.getItem('channel');
-            message = name + ' said "' + message + '" at ' + date.getHours() + ':' + date.getMinutes() + ' on ' + (date.getMonth()+1) + '/' + date.getDate();
+        var date = new Date();
+        var name = localStorage.getItem('name');
+        var message = document.querySelector('#messageSent').value;
+        const channel = localStorage.getItem('channel');
+        message = name + ' said "' + message + '" at ' + date.getHours() + ':' + date.getMinutes() + ' on ' + (date.getMonth()+1) + '/' + date.getDate();
 
-            socket.emit('create message',{'channel':channel}, {'message': message});
-            document.querySelector('#messageSent').value = '';
-            return false;
-        };
+        socket.emit('create message',{'channel':channel}, {'message': message});
+        document.querySelector('#messageSent').value = '';
+        return false;
+    };
+
+
     /*
     var date = new Date(); // for now
         date.getHours(); // => 9
@@ -110,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('new message', message =>
     {
         const li = document.createElement('li');
-        li.innerHTML = message;
+        li.innerHTML = urlify(message);
         document.querySelector('#messages').append(li);
     });
 });
