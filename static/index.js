@@ -1,4 +1,4 @@
-//regex to convert urls in messages to links
+//regex to convert urls in messages to links. Actual function itself found online, integrated into code by me.
 function urlify(text) {
     var urlRegex = /(https?:\/\/[^\s]+)/g;
     return text.replace(urlRegex, function(url) {
@@ -19,16 +19,16 @@ document.addEventListener('DOMContentLoaded', () => {
     //creates data that is locally stored and tells the server that a user is connecting
     socket.on('connect', () => {
         var name = localStorage.getItem('name');
-        if (name == 'null')
+        if (!name)
         {
             localStorage.setItem('name','not set');
         }
+        document.querySelector('#name').innerHTML = localStorage.getItem('name');
         currentChannel = localStorage.getItem('channel');
-        if (currentChannel == 'null')
+        if (!currentChannel)
         {
             localStorage.setItem('channel','general');
         }
-        document.querySelector('#name').append(name);
         socket.emit('connecting');
     });
 
