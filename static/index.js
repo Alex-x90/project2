@@ -1,3 +1,4 @@
+//regex to convert urls in messages to links
 function urlify(text) {
     var urlRegex = /(https?:\/\/[^\s]+)/g;
     return text.replace(urlRegex, function(url) {
@@ -5,16 +6,17 @@ function urlify(text) {
     });
 }
 
+//clears all messages
 function clearMessages(){
-    console.log("hi")
     document.querySelector('#messages').innerHTML = '';
-};
+}
 
 document.addEventListener('DOMContentLoaded', () => {
 
     // Connect to websocket
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
+    //creates data that is locally stored and tells the server that a user is connecting
     socket.on('connect', () => {
         var name = localStorage.getItem('name');
         if (name == 'null')
@@ -30,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         socket.emit('connecting');
     });
 
-    // When connected, configure stuff
+    // When connected, configure the page with the channel options and the messages for the current channel
     socket.on('connected', channel =>
     {
         document.querySelector('#channel-change').innerHTML = '';
@@ -49,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         socket.emit('channel change');
     });
 
+    //this actually loads the messages and is used both when the user first loads the page and when they change channels
     socket.on('message load', channel =>
     {
 
@@ -64,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    //creates a channel and sends the neccessary data to the server
     document.querySelector('.channel').onsubmit = function() {
                     const channel = document.querySelector('#channelName').value;
                     socket.emit('create channel', {'channel': channel});
@@ -71,13 +75,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     return false;
                 };
 
+    //stores which channel the user currently is in and lets the server know the user changed channels so it can send the new information for that channel
     document.querySelector('#channel-change').onchange = function() {
                     localStorage.setItem('channel', this.value);
                     channel = localStorage.getItem('channel');
-
                     socket.emit('channel change');
                 };
 
+    //changes the users name that is stored
     document.querySelector('.name').onsubmit = function() {
         var name = document.querySelector('#changeName').value;
         localStorage.setItem('name', name);
@@ -87,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return false;
     };
 
+    //gets the information for a message, concatonates it into a string then sends the message back to the server
     document.querySelector('.message').onsubmit = function() {
         var date = new Date();
         var name = localStorage.getItem('name');
@@ -99,14 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return false;
     };
 
-
-    /*
-    var date = new Date(); // for now
-        date.getHours(); // => 9
-        date.getMinutes(); // =>  30
-        date.getSeconds(); // => 51
-    */
-
+    //when there is a new channel created adds it to the current list of channels
     socket.on('new channel', channel =>
     {
         const option = document.createElement('option');
@@ -115,10 +114,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#channel-change').append(option);
     });
 
-    socket.on('new message', message =>
+    //when there is a new message checks if that message is in the current channel the user is in, and if it is it displays it.
+    socket.on('new message', (message,channel) =>
     {
-        const li = document.createElement('li');
-        li.innerHTML = urlify(message);
-        document.querySelector('#messages').append(li);
+        if (channel == localStorage.getItem('channel'))
+        {
+            const li = document.createElement('li');
+            li.innerHTML = urlify(message);
+            document.querySelector('#messages').append(li);
+        }
     });
 });
